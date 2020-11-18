@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% set showNav = True %}
+
+{% block title %}MySQL{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mysql.css') }}">
+{% endblock %}
+
+{% block content %}
+        <div class="row">
+            <div class="col mt-5">
+                <h2>Example: Food db</h2>
+                <table class="table">
+                    <th>id</th>
+                    <th>name</th>
+                    {% for item in food %}
+                        <tr>
+                            <td>{{ item[0] }}</td>
+                            <td>{{ item[1] }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/mysql.js') }}"></script>
+{% endblock %}

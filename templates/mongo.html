@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% set showNav = True %}
+
+{% block title %}MongoDB{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mongo.css') }}">
+{% endblock %}
+
+{% block content %}
+{# HTML CODE HERE#}
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/mongo.js') }}"></script>
+{% endblock %}
