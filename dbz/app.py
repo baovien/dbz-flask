@@ -18,6 +18,13 @@ load_dotenv()
 # ===================
 
 app.config['TEMPLATES_AUTO_RELOAD'] = True  # Force update on html on change
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("MYSQL_URI")
+app.config['MONGO_URI'] = os.getenv("MONGO_URI")
+
+NEO_USERNAME = os.getenv("NEO_USERNAME")
+NEO_PASSWORD = os.getenv("NEO_PASSWORD")
+NEO_URI = os.getenv("NEO_URI")
 
 debug = True
 port = 5000
@@ -26,16 +33,10 @@ port = 5000
 # DB Connections
 # ===================
 
-NEO_USERNAME = os.getenv("NEO_USERNAME")
-NEO_PASSWORD = os.getenv("NEO_PASSWORD")
-NEO_URI = os.getenv("NEO_URI")
-
 # MySQL
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("MYSQL_URI")
 mysql_db = SQLAlchemy(app)
 
 # MongoDB
-app.config['MONGO_URI'] = os.getenv("MONGO_URI")
 mongo = PyMongo(app)
 
 # Neo4j
@@ -53,7 +54,7 @@ def index():
 
 @app.route('/mysql')
 def mysql():
-    food = mysql_db.engine.execute("""SELECT * FROM food""")
+    food = mysql_db.engine.execute("""SELECT * FROM country LIMIT 50""")
     return render_template("mysql.html", food=list(food))
 
 
