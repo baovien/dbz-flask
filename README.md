@@ -1,7 +1,7 @@
 # dbz
 ## Installation
 
-Create a `.env` file in the root directory (or ask Bao for his `.env` file) 
+Create a `.env` file in the dbz directory (or ask Bao for his `.env` file) 
 ```
 SERVER_IP=
 
