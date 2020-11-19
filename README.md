@@ -28,11 +28,11 @@ MONGO_PORT=
 Activate your environment
 ```
 conda activate <yourenvironment>
-cd dbz
+cd dbz-flask
 pip install -e .
 ```
 
 ## Run the application
 
-Go to project root and run `python -m dbz.app`.
+Go to project root and run `python -m dbz.app`
 
