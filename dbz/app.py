@@ -3,7 +3,9 @@
 # ===================
 
 import os
-from flask import Flask, render_template, url_for
+import json
+
+from flask import Flask, render_template, url_for, jsonify
 from dotenv import load_dotenv
 
 from flask_sqlalchemy import SQLAlchemy
@@ -49,7 +51,7 @@ neo_driver = GraphDatabase.driver(NEO_URI, auth=(NEO_USERNAME, NEO_PASSWORD))
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template("home.html")
 
 
 @app.route('/mysql')
@@ -73,6 +75,39 @@ def neo():
 @app.route('/login')
 def login():
     return render_template("login.html")
+
+
+# ===================
+# API Calls
+# ===================
+
+@app.route('/mysql-stats', methods=["GET"])
+def mysql_stats():
+    query = """
+    SELECT location, SUM(new_cases) as confirmed, SUM(new_deaths) as deaths, SUM(new_tests) as tests
+    FROM country
+    GROUP BY location
+    """
+
+    resultproxy = mysql_db.engine.execute(query)
+
+    return jsonify([dict(row) for row in resultproxy])
+
+
+@app.route('/mongo-stats', methods=["GET"])
+def mongo_stats():
+    # fyll inn mongodb query som henter
+    # location, sum(new_cases), sum(new_deaths)
+
+    return jsonify("false")
+
+
+@app.route('/neo-stats', methods=["GET"])
+def neo_stats():
+    # fyll inn mongodb query som henter
+    # location, sum(new_cases), sum(new_deaths)
+
+    return jsonify("false")
 
 
 # ===================
