@@ -7,11 +7,47 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/neo.css') }}">
 {% endblock %}
 
-{% block content %}
+
+
 {# HTML CODE HERE#}
+{% block content %}
+    <h1>Welcome to NEO4J Dashboard!</h1>
+
+    <p>
+        <b>Tutorial:</b>
+        You can use your mouse to navigate in the various windows and drag nodes of the graphs in this page.
+        Use your scroll-wheel to zoom in and out.
+    </p>
+
+    <button type="button" class="btn btn-primary" onclick="draw()">Get All Countries</button>
+    <div id="viz"></div>
+
+
+    {# CODE: TEST #}
+    <pre><code>&lt;p&gt;Sample text here...&lt;/p&gt;
+    &lt;p&gt;And another line of sample text here...&lt;/p&gt;
+    </code></pre>
+
+    {# TABLE: Countries and Continents #}
+    <div class="row">
+            <div class="col mt-5">
+                <h2>Table: All Countries</h2>
+                <table class="table">
+                    <th>country</th>
+                    <th>continent</th>
+                    {% for item in nodes %}
+                        <tr>
+                            <td>{{ item[0] }}</td>
+                            <td>{{ item[1] }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
 
 {% endblock %}
 
 {% block scripts %}
+    <script src="https://cdn.neo4jlabs.com/neovis.js/v1.5.0/neovis.js"></script>
     <script src="{{ url_for('static', filename='js/neo.js') }}"></script>
 {% endblock %}
