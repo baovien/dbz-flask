@@ -41,10 +41,15 @@ class CustomNeoApp:
 
     @staticmethod
     def _find_and_return_countries_continents(tx):
-        query = (
-            "MATCH (c:Country) -[]-> (cc:Continent) "
-            "RETURN c.location, cc.continent"
-        )
+        # query = (
+        #     "MATCH (c:Country) -[]-> (cc:Continent) "
+        #     "RETURN c.location, cc.continent"
+        # )
+
+        query = """
+        MATCH (c:Country) -[]-> (cc:Continent)
+        RETURN c.location, cc.continent
+        """
 
         result = tx.run(query)
         return list(result)

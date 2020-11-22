@@ -4,7 +4,6 @@
 {% block title %}DBZ - Tables{% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 {% endblock %}
 
@@ -27,29 +26,10 @@
         <div class="col mt-5">
             <div id="myGrid" style="height: 600px" class="ag-theme-alpine"></div>
         </div>
-
-        {#        <div class="col mt-5">#}
-        {#            <table id="mainTable" class="display">#}
-        {#                <thead>#}
-        {#                <tr>#}
-        {#                    <th>Country</th>#}
-        {#                    <th>Confirmed</th>#}
-        {#                    <th>Deaths</th>#}
-        {#                    <th>Recovered</th>#}
-        {#                </tr>#}
-        {#                </thead>#}
-        {#                <tbody>#}
-        {#                </tbody>#}
-        {#            </table>#}
-        {#        </div>#}
     </div>
 
 {% endblock %}
 
 {% block scripts %}
-    <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.js"></script>
-
-    {#    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>#}
-    {#    <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>#}
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 {% endblock %}

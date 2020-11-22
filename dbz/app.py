@@ -15,7 +15,6 @@ from flask_pymongo import PyMongo
 # Neo4j Imports
 from dbz.neo4j_source.neo4j_app import CustomNeoApp
 
-
 app = Flask(__name__)
 load_dotenv()
 
@@ -60,8 +59,7 @@ def index():
 
 @app.route('/mysql')
 def mysql():
-    food = mysql_db.engine.execute("""SELECT * FROM country LIMIT 50""")
-    return render_template("mysql.html", food=list(food))
+    return render_template("mysql.html")
 
 
 @app.route('/mongo')
@@ -73,8 +71,8 @@ def mongo():
 @app.route('/neo')
 def neo():
     neo_driver.ping()
-    countries_continents = neo_driver.get_countries_continents()
-    return render_template("neo.html", nodes=list(countries_continents))
+    countries_continents = neo_driver.get_countries_continents()  # TODO: delete this
+    return render_template("neo.html", nodes=list(countries_continents))  # TODO: delete nodes
 
 
 @app.route('/login')
@@ -85,6 +83,33 @@ def login():
 # ===================
 # API Calls
 # ===================
+
+"""
+    Fyll inn query som henter:
+        
+        location, sum(new_cases), sum(new_deaths), sum(tests)
+    
+    Dataen skal formateres slik:
+    
+        data = [
+            {confirmed: 43123, deaths: 213123, location: afgh, tests: 12312}
+        ]
+        
+"""
+
+@app.route('/api-test', methods=["GET"])
+def api_test():
+    """
+    Eksempel endpoint som blir kalt i home.js (api_call_example)
+    :return:
+    """
+    dict_of_items = {
+        "test": 123,
+        "helo": "wrld"
+    }
+
+    return jsonify(dict_of_items)
+
 
 @app.route('/mysql-stats', methods=["GET"])
 def mysql_stats():
@@ -101,18 +126,32 @@ def mysql_stats():
 
 @app.route('/mongo-stats', methods=["GET"])
 def mongo_stats():
-    # fyll inn mongodb query som henter
-    # location, sum(new_cases), sum(new_deaths)
 
     return jsonify("false")
 
 
 @app.route('/neo-stats', methods=["GET"])
 def neo_stats():
-    # fyll inn mongodb query som henter
-    # location, sum(new_cases), sum(new_deaths)
 
     return jsonify("false")
+
+
+# ===================
+# Site specific api calls
+# ===================
+
+@app.route('/neo/country', methods=["GET"])
+def neo_country():
+    neo_driver.ping()
+
+    countries_continents = neo_driver.get_countries_continents()
+
+    # <Record c.location='Singapore' cc.continent='Asia'>
+    countries_continents_formatted = []
+    for row in countries_continents:
+        countries_continents_formatted.append({"location": row[0], "continent": row[1]})
+
+    return jsonify(countries_continents_formatted)
 
 
 # ===================
