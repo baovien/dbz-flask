@@ -5,13 +5,59 @@
 
 {% block css %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/neo.css') }}">
+
+    {#  Show syntax-highlighted code.  #}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/themes/prism.css">
 {% endblock %}
 
-{% block content %}
+
+
 {# HTML CODE HERE#}
+{% block content %}
+    <h1>Welcome to NEO4J Dashboard!</h1>
+
+    <p>
+        <b>Tutorial:</b>
+        You can use your mouse to navigate in the various windows and drag nodes of the graphs in this page.
+        Use your scroll-wheel to zoom in and out.
+    </p>
+
+    <button type="button" class="btn btn-primary" onclick="draw()">Get All Countries</button>
+    <div id="viz"></div>
+
+
+    {# CODE: TEST #}
+    <h4>Cypher: Get all Countries</h4>
+    <pre><code class="language-cypher">MATCH (c:Country)-[r]->(cc:Continent) RETURN c, r, cc;</code></pre>
+
+    {# TABLE: Countries and Continents #}
+    <div class="row">
+        <div class="col mt-5">
+            <h2>Table: All Countries</h2>
+            <table class="table">
+                <th>country</th>
+                <th>continent</th>
+                {% for item in nodes %}
+                    <tr>
+                        <td>{{ item[0] }}</td>
+                        <td>{{ item[1] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 
 {% endblock %}
 
 {% block scripts %}
+    <script src="https://cdn.neo4jlabs.com/neovis.js/v1.5.0/neovis.js"></script>
+
+    {#  Show syntax-highlighted code.  #}
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-cypher.min.js"></script>
+    {#    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/autoloader/prism-autoloader.min.js"></script>#}
+
     <script src="{{ url_for('static', filename='js/neo.js') }}"></script>
+
+
 {% endblock %}

@@ -10,7 +10,11 @@ from dotenv import load_dotenv
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_pymongo import PyMongo
-from neo4j import GraphDatabase
+# from neo4j import GraphDatabase
+
+# Neo4j Imports
+from dbz.neo4j_source.neo4j_app import CustomNeoApp
+
 
 app = Flask(__name__)
 load_dotenv()
@@ -42,7 +46,7 @@ mysql_db = SQLAlchemy(app)
 mongo = PyMongo(app)
 
 # Neo4j
-neo_driver = GraphDatabase.driver(NEO_URI, auth=(NEO_USERNAME, NEO_PASSWORD))
+neo_driver = CustomNeoApp(NEO_URI, NEO_USERNAME, NEO_PASSWORD)
 
 
 # ===================
@@ -68,8 +72,9 @@ def mongo():
 
 @app.route('/neo')
 def neo():
-    print(neo_driver)
-    return render_template("neo.html")
+    neo_driver.ping()
+    countries_continents = neo_driver.get_countries_continents()
+    return render_template("neo.html", nodes=list(countries_continents))
 
 
 @app.route('/login')
