@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_pymongo import PyMongo
-# from neo4j import GraphDatabase
 
 # Neo4j Imports
 from dbz.neo4j_source.neo4j_app import CustomNeoApp
@@ -70,9 +69,7 @@ def mongo():
 
 @app.route('/neo')
 def neo():
-    neo_driver.ping()
-    countries_continents = neo_driver.get_countries_continents()  # TODO: delete this
-    return render_template("neo.html", nodes=list(countries_continents))  # TODO: delete nodes
+    return render_template("neo.html")
 
 
 @app.route('/login')
@@ -132,18 +129,8 @@ def mongo_stats():
 
 @app.route('/neo-stats', methods=["GET"])
 def neo_stats():
-
     data = neo_driver.get_common_summary()
-    data_formatted = []
-    for row in data:
-        data_formatted.append({
-            "location": row[0],
-            "confirmed": row[1],
-            "deaths": row[2],
-            "tests": row[3]
-        })
-
-    return jsonify(data_formatted)
+    return jsonify(data)
 
 
 # ===================
@@ -152,23 +139,14 @@ def neo_stats():
 
 @app.route('/neo/country', methods=["GET"])
 def neo_country():
-    neo_driver.ping()  # TODO: REMOVE?
-
     countries_continents = neo_driver.get_countries_continents()
-
-    countries_continents_formatted = []
-    for row in countries_continents:
-        countries_continents_formatted.append({"location": row[0], "continent": row[1]})
-
-    return jsonify(countries_continents_formatted)
+    return jsonify(countries_continents)
 
 
 @app.route('/neo/continent', methods=["GET"])
 def neo_continent():
-    neo_driver.ping()  # TODO: REMOVE?
     continent_name = request.args.get('name')
     continent_name = continent_name.title()  # Properly capitalize
-    print(continent_name)  # TODO: Replace with better print or delete
     continent_stats = neo_driver.get_continent_stats(continent_name)
     return jsonify(continent_stats)
 

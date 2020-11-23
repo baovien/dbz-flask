@@ -45,30 +45,54 @@
     <h4>Cypher: Get all Countries</h4>
     <pre><code class="language-cypher">MATCH (c:Country)-[r]->(cc:Continent) RETURN c, r, cc;</code></pre>
 
-    {# Dropdown: Select Continent #}
-    <div class="dropdown">
-        <button class="btn btn-lg btn-secondary dropdown-toggle" type="button" id="continent_dropdown"
-                data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-            Europe
-        </button>
-        <div class="dropdown-menu" aria-labelledby="continent_dropdown">
-            <button class="dropdown-item" type="button">Asia</button>
-            <button class="dropdown-item" type="button">Europe</button>
-            <button class="dropdown-item" type="button">Africa</button>
-            <button class="dropdown-item" type="button">North America</button>
-            <button class="dropdown-item" type="button">South America</button>
-            <button class="dropdown-item" type="button">Oceania</button>
+
+    <h1>Stats by Continent ordered by Month</h1>
+
+    <div class="row">
+
+        {# TABLE: Stats by continent #}
+        <div class="col-6">
+            <h5>Resulting Table when executing the script to the right </h5>
+            <div id="continent_stats_table" class="ag-theme-alpine"></div>
+        </div>
+
+        {# Dropdown: Select Continent #}
+        <div class="col-6">
+
+            {# CODE: TEST #}
+            <h5>Cypher Script: Stats by Continent ordered by Month</h5>
+            <pre><code id="continent_code_snippet" class="language-cypher">
+                MATCH
+                    (e:Event)-[:IN]->(c)-[:LOCATED_IN]->(cc),
+                    (e)-[:DURING]->(d)
+                WHERE cc.continent = '{continent_name}'
+                RETURN
+                    d.date.month as month,
+                    SUM(e.new_cases) as total_cases,
+                    SUM(e.new_deaths) as total_deaths,
+                    SUM(e.new_tests) as total_tests
+                ORDER BY month
+            </code></pre>
+
+
+            <div class="dropdown">
+                <button class="btn btn-lg btn-info dropdown-toggle" type="button" id="continent_dropdown"
+                        data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    Europe
+                </button>
+                <div class="dropdown-menu" aria-labelledby="continent_dropdown">
+                    <button class="dropdown-item" type="button">Asia</button>
+                    <button class="dropdown-item" type="button">Europe</button>
+                    <button class="dropdown-item" type="button">Africa</button>
+                    <button class="dropdown-item" type="button">North America</button>
+                    <button class="dropdown-item" type="button">South America</button>
+                    <button class="dropdown-item" type="button">Oceania</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    {# TABLE: Stats by continent #}
-    <div>
-        <div class="col mt-5">
-            <h2>Table: Stats by Continent ordered by Month</h2>
-            <div id="continent_stats_table" class="ag-theme-alpine"></div>
-        </div>
-    </div>
 
 
 
@@ -97,6 +121,7 @@
     {#  Show syntax-highlighted code.  #}
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-cypher.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/normalize-whitespace/prism-normalize-whitespace.min.js"></script>
     {#    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/autoloader/prism-autoloader.min.js"></script>#}
 
     <script src="{{ url_for('static', filename='js/neo.js') }}"></script>

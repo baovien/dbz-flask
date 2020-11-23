@@ -18,21 +18,17 @@ class CustomNeoApp:
         """ Check current driver status """
         print(" *** NEO4J ::: Neo4J Custom App --- STILL ONLINE")
 
-
     def get_common_summary(self):
-        return self._exec_cypher(self._return_common_summary)
+        with self.driver.session() as session:
+            return session.read_transaction(self._return_common_summary)
 
     def get_continent_stats(self, continent_name):
         with self.driver.session() as session:
             return session.read_transaction(self._find_and_return_continents_stats, continent_name)
 
     def get_countries_continents(self):
-        return self._exec_cypher(self._find_and_return_countries_continents)
-
-    def _exec_cypher(self, _query_func):
-        # TODO: Merge into the other functions and then deprecate?
         with self.driver.session() as session:
-            return session.read_transaction(_query_func)
+            return session.read_transaction(self._find_and_return_countries_continents)
 
     @staticmethod
     def _find_and_return_continents_stats(tx, continent_name):
@@ -58,11 +54,13 @@ class CustomNeoApp:
     def _find_and_return_countries_continents(tx):
         query = """
         MATCH (c:Country) -[]-> (cc:Continent)
-        RETURN c.location, cc.continent
+        RETURN 
+            c.location as location, 
+            cc.continent as continent
         """
 
         result = tx.run(query)
-        return list(result)
+        return result.data()
 
     @staticmethod
     def _return_common_summary(tx):
@@ -70,12 +68,12 @@ class CustomNeoApp:
         query = """
         MATCH (e:Event)-[]->(c:Country)
         RETURN 
-            c.location as Country, 
-            SUM(e.new_cases) as Confirmed, 
-            SUM(e.new_deaths) as Deaths, 
-            SUM(e.new_tests) as Tests
-        ORDER BY Country
+            c.location as location, 
+            SUM(e.new_cases) as confirmed, 
+            SUM(e.new_deaths) as deaths, 
+            SUM(e.new_tests) as tests
+        ORDER BY location
         """
 
         result = tx.run(query)
-        return list(result)
+        return result.data()

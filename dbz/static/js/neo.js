@@ -9,6 +9,9 @@ let credentials = {
 // Todo: Find a better way to perform this
 let gridOptionsContinents = null;
 
+nw = Prism.plugins.NormalizeWhitespace;
+
+
 function onFirstDataRendered_f(params) {
     params.api.sizeColumnsToFit();
 }
@@ -132,8 +135,6 @@ function update_table_continent_stats(continent_name){
     let full_url = "/neo/continent?name=" + continent_name
     agGrid.simpleHttpRequest({url: full_url})
         .then(function (data) {
-            console.log(data)
-            console.log('HELLO BIS')
             gridOptionsContinents.api.setRowData(data);
         });
 }
@@ -156,6 +157,9 @@ button.addEventListener('click', function() {
     draw();
 });
 
+
+let continent_snippet = document.querySelector('#continent_code_snippet')
+
 // Continent Dropdown - On-Click
 let dropdown_face = document.querySelector('#continent_dropdown')
 let dropdown_button = document.querySelectorAll('.dropdown-item')
@@ -165,7 +169,20 @@ for (const btn of dropdown_button) {
         dropdown_face.innerText = btn.innerText
         dropdown_face.value = btn.value
 
-        // console.log(dropdown_face.innerHTML)
+        continent_snippet.innerHTML = `
+        MATCH
+            (e:Event)-[:IN]->(c)-[:LOCATED_IN]->(cc),
+            (e)-[:DURING]->(d)
+        WHERE cc.continent = '` + dropdown_face.innerHTML + `'
+        RETURN
+            d.date.month as month,
+            SUM(e.new_cases) as total_cases,
+            SUM(e.new_deaths) as total_deaths,
+            SUM(e.new_tests) as total_tests
+        ORDER BY month
+        `
+        Prism.highlightElement(continent_snippet);
+
         update_table_continent_stats(dropdown_face.innerHTML)
     });
 }
