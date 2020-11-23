@@ -5,6 +5,10 @@ let credentials = {
     server_password: "Alpacas1",
 }
 
+// Note: Dirty fix for below function
+// Todo: Find a better way to perform this
+let gridOptionsContinents = null;
+
 function onFirstDataRendered_f(params) {
     params.api.sizeColumnsToFit();
 }
@@ -110,7 +114,7 @@ function render_table_continent_stats(){
     ];
 
     // let the grid know which columns and what data to use
-    let gridOptions = {
+    gridOptionsContinents = {
         columnDefs: columnDefs,
         onFirstDataRendered: onFirstDataRendered_f,
         animateRows: true,
@@ -119,14 +123,18 @@ function render_table_continent_stats(){
     };
 
     let gridDiv = document.querySelector('#continent_stats_table');
-    new agGrid.Grid(gridDiv, gridOptions);
+    new agGrid.Grid(gridDiv, gridOptionsContinents);
 
+}
 
+function update_table_continent_stats(continent_name){
     // get data from server
-    agGrid.simpleHttpRequest({url: '/neo/continent'})
+    let full_url = "/neo/continent?name=" + continent_name
+    agGrid.simpleHttpRequest({url: full_url})
         .then(function (data) {
             console.log(data)
-            gridOptions.api.setRowData(data);
+            console.log('HELLO BIS')
+            gridOptionsContinents.api.setRowData(data);
         });
 }
 
@@ -138,6 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // render ag-grid table
     render_table();
     render_table_continent_stats()
+    update_table_continent_stats('Europe')
 
 });
 
@@ -146,3 +155,17 @@ let button = document.querySelector('#get_countries_btn');
 button.addEventListener('click', function() {
     draw();
 });
+
+// Continent Dropdown - On-Click
+let dropdown_face = document.querySelector('#continent_dropdown')
+let dropdown_button = document.querySelectorAll('.dropdown-item')
+for (const btn of dropdown_button) {
+    btn.addEventListener('click', function() {
+        dropdown_face.innerHTML = btn.innerHTML
+        dropdown_face.innerText = btn.innerText
+        dropdown_face.value = btn.value
+
+        // console.log(dropdown_face.innerHTML)
+        update_table_continent_stats(dropdown_face.innerHTML)
+    });
+}

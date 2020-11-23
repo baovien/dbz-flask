@@ -45,6 +45,22 @@
     <h4>Cypher: Get all Countries</h4>
     <pre><code class="language-cypher">MATCH (c:Country)-[r]->(cc:Continent) RETURN c, r, cc;</code></pre>
 
+    {# Dropdown: Select Continent #}
+    <div class="dropdown">
+        <button class="btn btn-lg btn-secondary dropdown-toggle" type="button" id="continent_dropdown"
+                data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+            Europe
+        </button>
+        <div class="dropdown-menu" aria-labelledby="continent_dropdown">
+            <button class="dropdown-item" type="button">Asia</button>
+            <button class="dropdown-item" type="button">Europe</button>
+            <button class="dropdown-item" type="button">Africa</button>
+            <button class="dropdown-item" type="button">North America</button>
+            <button class="dropdown-item" type="button">South America</button>
+            <button class="dropdown-item" type="button">Oceania</button>
+        </div>
+    </div>
 
     {# TABLE: Stats by continent #}
     <div>
@@ -55,7 +71,10 @@
     </div>
 
 
+
+
     {# TABLE: Countries and Continents #}
+
     <div>
         <div class="col mt-5">
             <h2>Table: All Countries</h2>

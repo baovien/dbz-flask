@@ -5,7 +5,7 @@
 import os
 import json
 
-from flask import Flask, render_template, url_for, jsonify
+from flask import Flask, render_template, url_for, jsonify, request
 from dotenv import load_dotenv
 
 from flask_sqlalchemy import SQLAlchemy
@@ -166,7 +166,10 @@ def neo_country():
 @app.route('/neo/continent', methods=["GET"])
 def neo_continent():
     neo_driver.ping()  # TODO: REMOVE?
-    continent_stats = neo_driver.get_continent_stats('Europe')
+    continent_name = request.args.get('name')
+    continent_name = continent_name.title()  # Properly capitalize
+    print(continent_name)  # TODO: Replace with better print or delete
+    continent_stats = neo_driver.get_continent_stats(continent_name)
     return jsonify(continent_stats)
 
 
