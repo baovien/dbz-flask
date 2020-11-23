@@ -133,7 +133,17 @@ def mongo_stats():
 @app.route('/neo-stats', methods=["GET"])
 def neo_stats():
 
-    return jsonify("false")
+    data = neo_driver.get_common_summary()
+    data_formatted = []
+    for row in data:
+        data_formatted.append({
+            "location": row[0],
+            "confirmed": row[1],
+            "deaths": row[2],
+            "tests": row[3]
+        })
+
+    return jsonify(data_formatted)
 
 
 # ===================
@@ -142,16 +152,22 @@ def neo_stats():
 
 @app.route('/neo/country', methods=["GET"])
 def neo_country():
-    neo_driver.ping()
+    neo_driver.ping()  # TODO: REMOVE?
 
     countries_continents = neo_driver.get_countries_continents()
 
-    # <Record c.location='Singapore' cc.continent='Asia'>
     countries_continents_formatted = []
     for row in countries_continents:
         countries_continents_formatted.append({"location": row[0], "continent": row[1]})
 
     return jsonify(countries_continents_formatted)
+
+
+@app.route('/neo/continent', methods=["GET"])
+def neo_continent():
+    neo_driver.ping()  # TODO: REMOVE?
+    continent_stats = neo_driver.get_continent_stats('Europe')
+    return jsonify(continent_stats)
 
 
 # ===================

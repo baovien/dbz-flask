@@ -22,21 +22,53 @@
         Use your scroll-wheel to zoom in and out.
     </p>
     {# TODO: bao: Jeg caller heller draw() funksjonen når javascripten blir loada #}
-{#    <button type="button" class="btn btn-primary" onclick="draw()">Get All Countries</button>#}
-    <div id="viz"></div>
+    {#    <button type="button" class="btn btn-primary" onclick="draw()">Get All Countries</button>#}
 
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div id="viz"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <button id="get_countries_btn" type="button" class="btn btn-primary">Show all Countries</button>
+                <button type="button" class="btn btn-primary">Button 2</button>
+                <button type="button" class="btn btn-primary">Button 3</button>
+            </div>
+        </div>
+
+    </div>
 
     {# CODE: TEST #}
     <h4>Cypher: Get all Countries</h4>
     <pre><code class="language-cypher">MATCH (c:Country)-[r]->(cc:Continent) RETURN c, r, cc;</code></pre>
 
-    {# TABLE: Countries and Continents #}
-    <div class="row">
+
+    {# TABLE: Stats by continent #}
+    <div>
         <div class="col mt-5">
-            <h2>Table: All Countries</h2>
-            <div id="neoGrid" style="height: 600px" class="ag-theme-alpine"></div> {# TODO: Change id if you want to trong #}
+            <h2>Table: Stats by Continent ordered by Month</h2>
+            <div id="continent_stats_table" class="ag-theme-alpine"></div>
         </div>
     </div>
+
+
+    {# TABLE: Countries and Continents #}
+    <div>
+        <div class="col mt-5">
+            <h2>Table: All Countries</h2>
+            <div id="neoGrid" class="ag-theme-alpine"></div>
+            {# TODO: Change id if you want to trong #}
+        </div>
+    </div>
+
+
+
+
+
+
 
 {% endblock %}
 

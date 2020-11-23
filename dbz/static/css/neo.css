@@ -1,5 +1,15 @@
 #viz {
     width: 100%;
-    height: 400px;
+    height: 600px;
     background-color: powderblue;
+}
+
+#neoGrid {
+    width: 600px;
+    height: 300px;
+}
+
+#continent_stats_table {
+    width: 600px;
+    height: 570px;
 }
