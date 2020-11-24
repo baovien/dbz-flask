@@ -12,56 +12,141 @@
 
 
 
+
+
 {# HTML CODE HERE#}
 {% block content %}
-    <h1>Welcome to NEO4J Dashboard!</h1>
-
-    <p>
-        <b>Tutorial:</b>
-        You can use your mouse to navigate in the various windows and drag nodes of the graphs in this page.
-        Use your scroll-wheel to zoom in and out.
-    </p>
-    {# TODO: bao: Jeg caller heller draw() funksjonen når javascripten blir loada #}
-    {#    <button type="button" class="btn btn-primary" onclick="draw()">Get All Countries</button>#}
 
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div id="viz"></div>
-            </div>
+    {# PART: Jumbotron Header #}
+    <div class="jumbotron text-white rounded bg-dark">
+        <div class="container">
+            <h1 class="display-1">Neo4j Dashboard</h1>
+
+            <p class="lead">
+                <b>Tutorial:</b>
+                You can use your mouse to navigate in the various windows and drag nodes of the graphs in this page.
+                Use your scroll-wheel to zoom in and out. You can double-click nodes for more info. </p>
         </div>
-        <div class="row">
-            <div class="col-4">
-                <button id="get_countries_btn" type="button" class="btn btn-primary">Show all Countries</button>
-                <button type="button" class="btn btn-primary">Button 2</button>
-                <button type="button" class="btn btn-primary">Button 3</button>
-            </div>
-        </div>
-
     </div>
 
-    {# CODE: TEST #}
-    <h4>Cypher: Get all Countries</h4>
-    <pre><code class="language-cypher">MATCH (c:Country)-[r]->(cc:Continent) RETURN c, r, cc;</code></pre>
 
 
-    <h1>Stats by Continent ordered by Month</h1>
+    {# PART: Neovis Graph Viewer #}
+    <div id="part_1" class="container">
 
-    <div class="row">
+        <h2 class="display-4">Countries and Continents</h2>
 
-        {# TABLE: Stats by continent #}
-        <div class="col-6">
-            <h5>Resulting Table when executing the script to the right </h5>
-            <div id="continent_stats_table" class="ag-theme-alpine"></div>
+
+        {# GRAPH: Neovis Graph 1 #}
+        <div class="row">
+            <div class="col-7">
+                <div id="neo_graph_1"></div>
+            </div>
+
+
+            {# TABLE: Countries and Continents #}
+            <div class="col-5">
+                {#                <h2>Table: All Countries</h2>#}
+                <div id="neoGrid" class="ag-theme-alpine"></div>
+                {# TODO: Change id if you want to trong #}
+            </div>
         </div>
 
-        {# Dropdown: Select Continent #}
-        <div class="col-6">
+        <div class="row">
 
-            {# CODE: TEST #}
-            <h5>Cypher Script: Stats by Continent ordered by Month</h5>
-            <pre><code id="continent_code_snippet" class="language-cypher">
+            {# CODE: Get Countries by Continent as Graph #}
+            <div class="col-7">
+                <pre><code class="language-cypher">
+                    // Get all Countries as graph
+                    MATCH (c:Country)-[r]->(cc:Continent)
+                    RETURN c, r, cc;
+                </code></pre>
+            </div>
+
+
+            {# CODE: Get Countries by Continent as Table #}
+            <div class="col-5">
+                <pre><code class="language-cypher">
+                    // Get all Countries as Table
+                    MATCH (c:Country) -[]-> (cc:Continent)
+                    RETURN
+                        c.location as location,
+                        cc.continent as continent
+                </code></pre>
+            </div>
+        </div>
+
+
+        {# PART: Stats by continent #}
+        <h2 class="display-4">Covid-19 Stats by Month</h2>
+
+        {# GRAPH: Neovis Graph for Country Date #}
+        <div class="row">
+            <div class="col-12">
+                <div id="neo_graph_2"></div>
+            </div>
+        </div>
+
+
+        {# CODE: Get Countries by Continent as Table #}
+        <div class="row">
+            <div class="col-12">
+                <pre><code class="language-cypher">
+                    MATCH
+                        (c:Country) <-[r]- (e:Event) -[i]-> (d:Date),
+                        (c:Country) -[x]-> (cc:Continent)
+                    WHERE
+                        d.date.month = 5
+                        AND e.new_cases > 2000
+                    RETURN c, r, e, cc, x
+                </code></pre>
+            </div>
+        </div>
+
+
+        {# PART: Stats by Date #}
+        <h2 class="display-4">Covid-19 Stats by Day</h2>
+
+        {# GRAPH: Neovis Graph for Country Date #}
+        <div class="row">
+            <div class="col-12">
+                <div id="neo_graph_3"></div>
+            </div>
+        </div>
+        <div class="row">
+            {# CODE: Get Countries by Continent as Table #}
+            <div class="col-12">
+                <pre><code class="language-cypher">
+                MATCH
+                    (c:Country) <-[r]- (e:Event) -[i]-> (d:Date),
+                    (c:Country) -[x]-> (cc:Continent)
+                WHERE
+                    d.date = Date('2020-06-01')
+                    AND e.new_cases > 100
+                RETURN c, r, e, d, i, cc, x
+                </code></pre>
+            </div>
+        </div>
+
+
+        {# PART: Stats by continent #}
+        <h2 class="display-4">Stats by Continent ordered by Month</h2>
+
+        <div class="row">
+
+            {# TABLE: Stats by continent #}
+            <div class="col-7">
+                <h5>Resulting Table when executing the script to the right </h5>
+                <div id="continent_stats_table" class="ag-theme-alpine"></div>
+            </div>
+
+            {# Dropdown: Select Continent #}
+            <div class="col-5">
+
+                {# CODE: TEST #}
+                <h5>Cypher Script: Stats by Continent ordered by Month</h5>
+                <pre><code id="continent_code_snippet" class="language-cypher">
                 MATCH
                     (e:Event)-[:IN]->(c)-[:LOCATED_IN]->(cc),
                     (e)-[:DURING]->(d)
@@ -75,19 +160,20 @@
             </code></pre>
 
 
-            <div class="dropdown">
-                <button class="btn btn-lg btn-info dropdown-toggle" type="button" id="continent_dropdown"
-                        data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                    Europe
-                </button>
-                <div class="dropdown-menu" aria-labelledby="continent_dropdown">
-                    <button class="dropdown-item" type="button">Asia</button>
-                    <button class="dropdown-item" type="button">Europe</button>
-                    <button class="dropdown-item" type="button">Africa</button>
-                    <button class="dropdown-item" type="button">North America</button>
-                    <button class="dropdown-item" type="button">South America</button>
-                    <button class="dropdown-item" type="button">Oceania</button>
+                <div class="dropdown">
+                    <button class="btn btn-lg btn-info dropdown-toggle" type="button" id="continent_dropdown"
+                            data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        Europe
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="continent_dropdown">
+                        <button class="dropdown-item" type="button">Asia</button>
+                        <button class="dropdown-item" type="button">Europe</button>
+                        <button class="dropdown-item" type="button">Africa</button>
+                        <button class="dropdown-item" type="button">North America</button>
+                        <button class="dropdown-item" type="button">South America</button>
+                        <button class="dropdown-item" type="button">Oceania</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -97,15 +183,6 @@
 
 
 
-    {# TABLE: Countries and Continents #}
-
-    <div>
-        <div class="col mt-5">
-            <h2>Table: All Countries</h2>
-            <div id="neoGrid" class="ag-theme-alpine"></div>
-            {# TODO: Change id if you want to trong #}
-        </div>
-    </div>
 
 
 

@@ -1,12 +1,24 @@
-#viz {
+#neo_graph_1 {
     width: 100%;
     height: 600px;
     background-color: powderblue;
 }
 
+#neo_graph_2 {
+    width: 100%;
+    height: 600px;
+    background-color: lightyellow;
+}
+
+#neo_graph_3 {
+    width: 100%;
+    height: 600px;
+    background-color: lightcyan;
+}
+
 #neoGrid {
-    width: 600px;
-    height: 300px;
+    width: 100%;
+    height: 100%;
 }
 
 #continent_stats_table {
@@ -16,4 +28,13 @@
 
 pre {
     white-space: pre-wrap
+}
+
+.display-4 {
+    background-color: slategray;
+    color: whitesmoke;
+    border-radius: 5px;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }

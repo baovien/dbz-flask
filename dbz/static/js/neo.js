@@ -16,9 +16,9 @@ function onFirstDataRendered_f(params) {
     params.api.sizeColumnsToFit();
 }
 
-function draw() {
+function draw_graph_countries() {
     let config = {
-        container_id: "viz",
+        container_id: "neo_graph_1",
         labels: {
             "Country": {
                 "caption": "location",
@@ -41,6 +41,116 @@ function draw() {
     let viz = new NeoVis.default({...credentials, ...config});
     viz.render();
 }
+
+
+
+function draw_graph_event_by_country() {
+    let config = {
+        container_id: "neo_graph_2",
+        labels: {
+            "Country": {
+                "caption": "location",
+                // "community": "population",
+                "size": "population_density",
+            },
+            "Event": {
+                "caption": "new_cases",
+                "size": "new_cases",
+                // "community": "new_cases",
+            },
+            "Date": {
+                "caption": "date.day",
+                // "community": "date.day",
+            },
+            "Continent": {
+                "caption": "continent",
+                "community": "continent",
+            },
+        },
+        relationships: {
+            "IN": {
+                "caption": false
+            },
+            "DURING": {
+                "caption": false
+            },
+            "LOCATED_IN": {
+                "caption": false,
+            },
+        },
+        initial_cypher: `
+        MATCH 
+            (c:Country) <-[r]- (e:Event) -[i]-> (d:Date),
+            (c:Country) -[x]-> (cc:Continent)
+        WHERE 
+            d.date.month = 5 
+            AND e.new_cases > 2000
+        RETURN c, r, e, cc, x
+        `
+
+        // AND c.location in ['Norway','Vietnam','Sweden', 'China', 'Japan']
+
+    }
+
+    let viz = new NeoVis.default({...credentials, ...config});
+    viz.render();
+}
+
+
+
+function draw_graph_event_by_date() {
+    let config = {
+        container_id: "neo_graph_3",
+        labels: {
+            "Country": {
+                "caption": "location",
+                // "community": "population_density",
+                "size": "population_density",
+            },
+            "Event": {
+                "caption": "new_cases",
+                "size": "new_cases",
+                // "community": "new_cases",
+            },
+            "Date": {
+                "caption": "date.day",
+                // "community": "date.day",
+            },
+            "Continent": {
+                "caption": "continent",
+                // "community": "continent",
+            },
+        },
+        relationships: {
+            "IN": {
+                "caption": false,
+                "thickness": 2
+
+            },
+            "DURING": {
+                "caption": false,
+                "thickness": 1
+            },
+            "LOCATED_IN": {
+                "caption": false,
+                "thickness": 3
+            },
+        },
+        initial_cypher: `
+        MATCH 
+            (c:Country) <-[r]- (e:Event) -[i]-> (d:Date),
+            (c:Country) -[x]-> (cc:Continent)
+        WHERE 
+            d.date = Date('2020-06-01')
+            AND e.new_cases > 100
+        RETURN c, r, e, d, i, cc, x
+        `
+    }
+
+    let viz = new NeoVis.default({...credentials, ...config});
+    viz.render();
+}
+
 
 
 function render_table(){
@@ -143,18 +253,18 @@ function update_table_continent_stats(continent_name){
 // On-Load: setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     // draw graph
-    draw();
+    draw_graph_countries();
+    draw_graph_event_by_country();
+    draw_graph_event_by_date();
+
     // render ag-grid table
     render_table();
-    render_table_continent_stats()
-    update_table_continent_stats('Europe')
 
-});
+    render_table_continent_stats();
+    update_table_continent_stats('Europe');
 
-// On-Click
-let button = document.querySelector('#get_countries_btn');
-button.addEventListener('click', function() {
-    draw();
+
+
 });
 
 
