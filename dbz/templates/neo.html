@@ -8,9 +8,13 @@
 
     {#  Show syntax-highlighted code.  #}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/themes/prism.css">
+
+    {#  Bootstrap-datepicker  #}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"
+          integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw=="
+          crossorigin="anonymous"/>
 {% endblock %}
-
-
 
 
 
@@ -22,13 +26,15 @@
     <div class="jumbotron text-white rounded bg-dark">
         <div class="container">
             <h1 class="display-1">Neo4j Dashboard</h1>
-
             <p class="lead">
-                <b>Tutorial:</b>
-                You can use your mouse to navigate in the various windows and drag nodes of the graphs in this page.
-                Use your scroll-wheel to zoom in and out. You can double-click nodes for more info. </p>
+                <b>Tutorial:</b><br/>
+                Use your mouse-pointer to navigate the graphs and to drag nodes around.<br/>
+                Use your scroll-wheel to zoom in and out. <br/>
+                You can double-click nodes for more info.
+            </p>
         </div>
     </div>
+
 
 
 
@@ -81,18 +87,18 @@
         {# PART: Stats by continent #}
         <h2 class="display-4">Covid-19 Stats by Month</h2>
 
-        {# GRAPH: Neovis Graph for Country Date #}
-        <div class="row">
-            <div class="col-12">
-                <div id="neo_graph_2"></div>
-            </div>
-        </div>
-
 
         {# CODE: Get Countries by Continent as Table #}
         <div class="row">
-            <div class="col-12">
-                <pre><code class="language-cypher">
+            <div class="col-3 text-center">
+                <div id="month_datepicker_component" class="datepicker">
+                    <input id="month_input" type="text" class="form-control" hidden>
+                </div>
+            </div>
+
+
+            <div class="col-9">
+                <pre><code id="month_code_snippet" class="language-cypher">
                     MATCH
                         (c:Country) <-[r]- (e:Event) -[i]-> (d:Date),
                         (c:Country) -[x]-> (cc:Continent)
@@ -104,20 +110,32 @@
             </div>
         </div>
 
-
-        {# PART: Stats by Date #}
-        <h2 class="display-4">Covid-19 Stats by Day</h2>
+        <div class="row">
+            <div class="col-12 text-center">
+                <button id="month_query_button" type="button" class="btn btn-warning btn-block">Execute Query</button>
+            </div>
+        </div>
 
         {# GRAPH: Neovis Graph for Country Date #}
         <div class="row">
             <div class="col-12">
-                <div id="neo_graph_3"></div>
+                <div id="neo_graph_2"></div>
             </div>
         </div>
+
+        {# PART: Stats by Date #}
+        <h2 class="display-4">Covid-19 Stats by Day</h2>
+
         <div class="row">
+            <div class="col-3 text-center">
+                <div id="datepicker_component" class="datepicker">
+                    <input id="date_input" type="text" class="form-control" hidden>
+                </div>
+            </div>
+
             {# CODE: Get Countries by Continent as Table #}
-            <div class="col-12">
-                <pre><code class="language-cypher">
+            <div class="col-9">
+                <pre><code id="day_code_snippet" class="language-cypher">
                 MATCH
                     (c:Country) <-[r]- (e:Event) -[i]-> (d:Date),
                     (c:Country) -[x]-> (cc:Continent)
@@ -127,6 +145,22 @@
                 RETURN c, r, e, d, i, cc, x
                 </code></pre>
             </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-12 text-center">
+                <button id="day_query_button" type="button" class="btn btn-success btn-block">Execute Query</button>
+            </div>
+        </div>
+
+        {# GRAPH: Neovis Graph for Country Date #}
+        <div class="row">
+            <div class="col-12">
+                <div id="neo_graph_3"></div>
+            </div>
+
+
         </div>
 
 
@@ -200,6 +234,11 @@
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-cypher.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/normalize-whitespace/prism-normalize-whitespace.min.js"></script>
     {#    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/autoloader/prism-autoloader.min.js"></script>#}
+
+    {#  Bootstrap-datepicker  #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"
+            integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ=="
+            crossorigin="anonymous"></script>
 
     <script src="{{ url_for('static', filename='js/neo.js') }}"></script>
 

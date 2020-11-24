@@ -7,7 +7,7 @@
 #neo_graph_2 {
     width: 100%;
     height: 600px;
-    background-color: lightyellow;
+    background-color: beige;
 }
 
 #neo_graph_3 {
@@ -31,6 +31,7 @@ pre {
 }
 
 .display-4 {
+    margin-top: 50px !important;
     background-color: slategray;
     color: whitesmoke;
     border-radius: 5px;
@@ -38,3 +39,7 @@ pre {
     padding-top: 10px;
     padding-bottom: 10px;
 }
+
+/*.mt-5 {*/
+/*    margin-top: 100px !important;*/
+/*}*/

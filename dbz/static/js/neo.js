@@ -44,7 +44,7 @@ function draw_graph_countries() {
 
 
 
-function draw_graph_event_by_country() {
+function draw_graph_event_by_country(month_string) {
     let config = {
         container_id: "neo_graph_2",
         labels: {
@@ -83,7 +83,7 @@ function draw_graph_event_by_country() {
             (c:Country) <-[r]- (e:Event) -[i]-> (d:Date),
             (c:Country) -[x]-> (cc:Continent)
         WHERE 
-            d.date.month = 5 
+            d.date.month = ${month_string} 
             AND e.new_cases > 2000
         RETURN c, r, e, cc, x
         `
@@ -98,7 +98,7 @@ function draw_graph_event_by_country() {
 
 
 
-function draw_graph_event_by_date() {
+function draw_graph_event_by_date(date_string) {
     let config = {
         container_id: "neo_graph_3",
         labels: {
@@ -141,7 +141,7 @@ function draw_graph_event_by_date() {
             (c:Country) <-[r]- (e:Event) -[i]-> (d:Date),
             (c:Country) -[x]-> (cc:Continent)
         WHERE 
-            d.date = Date('2020-06-01')
+            d.date = Date('${date_string}')
             AND e.new_cases > 100
         RETURN c, r, e, d, i, cc, x
         `
@@ -187,7 +187,6 @@ function render_table(){
     // get data from server
     agGrid.simpleHttpRequest({url: '/neo/country'})
         .then(function (data) {
-            console.log(data)
             gridOptions.api.setRowData(data);
         });
 
@@ -250,12 +249,85 @@ function update_table_continent_stats(continent_name){
 }
 
 
+let month_datepicker_element = $('#month_datepicker_component').datepicker({
+    format: "m",
+    startDate: "1",
+    endDate: "11",
+    minViewMode: 1,
+    maxViewMode: 1,
+});
+
+// On-date-change: Update code snippet
+let month_code_snippet = document.querySelector('#month_code_snippet')
+let month_input_field = document.querySelector('#month_input')
+month_datepicker_element.on('changeDate', () => {
+    month_code_snippet.innerHTML = `
+    MATCH
+        (c:Country) <-[r]- (e:Event) -[i]-> (d:Date),
+        (c:Country) -[x]-> (cc:Continent)
+    WHERE
+        d.date.month = ${month_input_field.value}
+        AND e.new_cases > 2000
+    RETURN c, r, e, cc, x`;
+
+    Prism.highlightElement(month_code_snippet);
+
+});
+
+document.querySelector('#month_query_button').addEventListener('click', function() {
+    if (!month_input_field.value || month_input_field.value === "") {
+        draw_graph_event_by_country(5);  // Backup Function-call
+    }else {
+        draw_graph_event_by_country(month_input_field.value);
+    }
+});
+
+
+// BOOTSTRAP DATEPICKER: Day Selector for Graph #2
+// Note: Using jQuery as I cannot find a way to avoid it here!
+let datepicker_element = $('#datepicker_component').datepicker({
+    format: "yyyy-mm-dd",
+    startDate: "2020-01-01",
+    endDate: "2020-11-18",
+    maxViewMode: 0,
+});
+
+// On-date-change: Update code snippet
+let day_code_snippet = document.querySelector('#day_code_snippet')
+let date_input_field = document.querySelector('#date_input')
+datepicker_element.on('changeDate', () => {
+    day_code_snippet.innerHTML = `
+    MATCH
+        (c:Country) <-[r]- (e:Event) -[i]-> (d:Date),
+        (c:Country) -[x]-> (cc:Continent)
+    WHERE
+        d.date = Date('${date_input_field.value}')
+        AND e.new_cases > 100
+    RETURN c, r, e, d, i, cc, x`;
+
+    Prism.highlightElement(day_code_snippet);
+
+});
+
+
+document.querySelector('#day_query_button').addEventListener('click', function() {
+    if (!date_input_field.value || date_input_field.value === "") {
+        draw_graph_event_by_date('2020-06-01');  // Backup Function-call
+    }else {
+        draw_graph_event_by_date(date_input_field.value);
+    }
+});
+
+
+
+
+
 // On-Load: setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     // draw graph
     draw_graph_countries();
-    draw_graph_event_by_country();
-    draw_graph_event_by_date();
+    draw_graph_event_by_country(5);
+    draw_graph_event_by_date('2020-06-01');  // Random initial date
 
     // render ag-grid table
     render_table();
