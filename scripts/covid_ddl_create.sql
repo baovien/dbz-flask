@@ -1,24 +1,24 @@
-# DROP DATABASE IF EXISTS covid;
-#
-# CREATE DATABASE IF NOT EXISTS covid;
+DROP DATABASE IF EXISTS covid;
+
+CREATE DATABASE IF NOT EXISTS covid;
 USE covid;
 
 # DROP tables
-SET FOREIGN_KEY_CHECKS = 0;
-
-DROP TABLE IF EXISTS DIM_country;
-DROP TABLE IF EXISTS DIM_continent;
-DROP TABLE IF EXISTS DIM_date;
-DROP TABLE IF EXISTS DIM_events;
-DROP TABLE IF EXISTS DIM_statistics;
-
-SET FOREIGN_KEY_CHECKS = 1;
+# SET FOREIGN_KEY_CHECKS = 0;
+#
+# DROP TABLE IF EXISTS DIM_country;
+# DROP TABLE IF EXISTS DIM_continent;
+# DROP TABLE IF EXISTS DIM_date;
+# DROP TABLE IF EXISTS DIM_events;
+# DROP TABLE IF EXISTS DIM_statistics;
+#
+# SET FOREIGN_KEY_CHECKS = 1;
 
 
 CREATE TABLE DIM_continent
 (
-    continent_id INT          NOT NULL,
-    name         VARCHAR(255) NULL,
+    continent_id INT AUTO_INCREMENT  NOT NULL,
+    name         VARCHAR(255) UNIQUE NULL,
     PRIMARY KEY (continent_id)
 );
 
@@ -34,7 +34,7 @@ CREATE TABLE DIM_country
 CREATE TABLE DIM_date
 (
     date        DATE                                     NOT NULL,
-    day_of_week INT CHECK ( day_of_week BETWEEN 1 AND 7) NULL,
+    day_of_week INT CHECK ( day_of_week BETWEEN 0 AND 6) NULL,
     day         INT CHECK ( day BETWEEN 1 AND 31)        NULL,
     month       INT CHECK ( month BETWEEN 1 AND 12)      NULL,
     year        INT,
@@ -50,7 +50,7 @@ CREATE TABLE DIM_events
     new_tests  INT         NULL,
     PRIMARY KEY (iso_code, date),
     FOREIGN KEY (iso_code) REFERENCES DIM_country (iso_code),
-    FOREIGN KEY (date) references DIM_date (date)
+    FOREIGN KEY (date) REFERENCES DIM_date (date)
 );
 
 CREATE TABLE DIM_statistics
