@@ -115,8 +115,9 @@ def api_test():
 @app.route('/mysql-stats', methods=["GET"])
 def mysql_stats():
     query = """
-    SELECT location, SUM(new_cases) as confirmed, SUM(new_deaths) as deaths, SUM(new_tests) as tests
-    FROM country
+    SELECT c.name AS location, SUM(e.new_cases) as confirmed, SUM(e.new_deaths) as deaths, SUM(e.new_tests) as tests
+    FROM DIM_country as c, DIM_events AS e
+    WHERE c.iso_code=e.iso_code
     GROUP BY location
     """
 

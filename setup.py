@@ -6,5 +6,5 @@ setuptools.setup(
     author="dbz",
     description="Umbrella frontend for IKT446 project",
     packages=["dbz"],
-    install_requires=['flask', 'requests', 'pandas', 'neo4j', 'Flask-PyMongo', 'Flask-SQLAlchemy', 'pymysql', 'python-dotenv'],
+    install_requires=['flask', 'requests', 'pandas', 'neo4j', 'Flask-PyMongo', 'Flask-SQLAlchemy', 'pymysql', 'python-dotenv', "simplejson"],
 )
