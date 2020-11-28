@@ -4,7 +4,7 @@
     /*height: 200px;*/
 }
 
-#table_per_million{
+#table_per_million {
     background-color: powderblue;
     width: 100%;
     height: 570px;
@@ -15,4 +15,12 @@
     background-color: powderblue;
     width: 100%;
     height: 570px;
+}
+
+
+#myDiv {
+    background-color: powderblue;
+    width: 1000px;
+    height: 570px;
+
 }

@@ -211,6 +211,19 @@ def mysql_month():
 
     return jsonify([dict(row) for row in resultproxy])
 
+
+@app.route('/mysql/map', methods=["GET"])
+def mysql_map():
+    query = """
+        SELECT name, SUM(new_deaths) as total_deaths
+        FROM DIM_country NATURAL JOIN DIM_events
+        GROUP BY name;
+        """
+
+    resultproxy = mysql_db.engine.execute(query)
+
+    return jsonify([dict(row) for row in resultproxy])
+
 # ===================
 # Main
 # ===================

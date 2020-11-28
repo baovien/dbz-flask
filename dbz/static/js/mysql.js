@@ -208,10 +208,54 @@ function render_table_month_year() {
 }
 
 
+/**
+ * Render Choropleth Map colored by total deaths.
+ */
+function draw_choropleth_map() {
+    fetch('/mysql/map')
+        .then(response => response.json())
+        .then(result => {
+
+                let countries = result.map(a => a.name);
+                let deaths = result.map(b => b.total_deaths);
+
+                let data = [{
+                    type: 'choropleth',
+                    locationmode: 'country names',
+                    locations: countries,
+                    z: deaths,
+                    autocolorscale: true,
+                    colorbar: {
+                        autotic: true,
+                        title: 'Total Deaths'
+                    },
+                }];
+
+                let layout = {
+                    title: 'Total Covid-19 Cases',
+                    geo: {
+                        projection: {
+                            type: 'robinson'
+                        }
+                    }
+                };
+
+                Plotly.newPlot("myDiv", data, layout, {showLink: false});
+
+            }
+        );
+
+}
+
+
 // On-Load: setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
+
+    draw_choropleth_map()
+
     draw_scatter_plot();
 
     render_table_million();
     render_table_month_year();
+
 });

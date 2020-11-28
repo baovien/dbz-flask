@@ -11,6 +11,7 @@
 {% block content %}
 
 
+
     {# PART: Jumbotron Header #}
     <div class="jumbotron text-white rounded bg-dark">
         <div class="container">
@@ -23,7 +24,18 @@
     </div>
 
 
+
+
     <div class="container">
+
+        {# CHOROPLETH MAP #}
+        <div class="row">
+            <div class="col-12">
+                <div id='myDiv'>
+                {#   Plotly chart will be drawn inside this DIV   #}
+                </div>
+            </div>
+        </div>
 
 
         {# CHART: Scatter Plot on Median Age / Total Deaths #}
@@ -60,8 +72,13 @@
 {% endblock %}
 
 {% block scripts %}
+
     {#  ChartJS  #}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 
+    {#  plotly.js  #}
+    <script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
+
     <script src="{{ url_for('static', filename='js/mysql.js') }}"></script>
+
 {% endblock %}
