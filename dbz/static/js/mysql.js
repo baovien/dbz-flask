@@ -120,7 +120,7 @@ function render_table_million() {
     ];
 
     // let the grid know which columns and what data to use
-    gridOptionsContinents = {
+    let gridOptionsContinents = {
         columnDefs: columnDefs,
         onFirstDataRendered: onFirstDataRendered_f,
         animateRows: true,
@@ -143,10 +143,75 @@ function render_table_million() {
 }
 
 
+/**
+ * Render table with stats grouped by month and year.
+ */
+function render_table_month_year() {
+    let columnDefs = [
+        {
+            headerName: "Month",
+            field: "month",
+            sortable: true,
+            filter: "agTextColumnFilter",
+            sortingOrder: ['desc', 'asc']
+        },
+        {
+            headerName: "Year",
+            field: "year",
+            sortable: true,
+            filter: "agTextColumnFilter",
+            sortingOrder: ['desc', 'asc']
+        },
+        {
+            headerName: "Total Cases",
+            field: "total_cases",
+            sortable: true,
+            filter: "agTextColumnFilter",
+            sortingOrder: ['desc', 'asc']
+        },
+        {
+            headerName: "Total Deaths",
+            field: "total_deaths",
+            sortable: true,
+            filter: "agTextColumnFilter",
+            sortingOrder: ['desc', 'asc']
+        },
+        {
+            headerName: "Total Tests",
+            field: "total_tests",
+            sortable: true,
+            filter: "agTextColumnFilter",
+            sortingOrder: ['desc', 'asc']
+        },
+    ];
+
+    // let the grid know which columns and what data to use
+    let gridOptionsContinents = {
+        columnDefs: columnDefs,
+        onFirstDataRendered: onFirstDataRendered_f,
+        animateRows: true,
+        pagination: false,
+    };
+
+
+    let gridDiv = document.querySelector('#table_month_year');
+    new agGrid.Grid(gridDiv, gridOptionsContinents);
+
+    // get data from server
+    let full_url = "/mysql/month"
+    agGrid.simpleHttpRequest({url: full_url})
+        .then(function (data) {
+            gridOptionsContinents.api.setRowData(data);
+            console.log(data)
+        });
+
+}
+
 
 // On-Load: setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     draw_scatter_plot();
 
     render_table_million();
+    render_table_month_year();
 });

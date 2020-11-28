@@ -9,24 +9,54 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-12">
-            <h2>Example: covid19 db</h2>
-            {# TABLE: Summary per million by Country #}
-            <div id="table_per_million" class="ag-theme-alpine"></div>
+
+
+    {# PART: Jumbotron Header #}
+    <div class="jumbotron text-white rounded bg-dark">
+        <div class="container">
+            <h1 class="display-1">MySQL Dashboard</h1>
+            <p class="lead">
+                <b>Tutorial:</b><br/>
+                Hover your mouse pointer on various elements on this page for more information.<br/>
+            </p>
         </div>
     </div>
 
-    {# CHART: Scatter Plot on Median Age / Total Deaths #}
-    <div class="row">
-        <div class="col-12">
-            {#  This div is used for resizing the canvas.   #}
-            <div id="chart_div">
-                {#  ChartJS Scatter Plot   #}
-                <canvas id="scatter_plot_age_deaths"></canvas>
+
+    <div class="container">
+
+
+        {# CHART: Scatter Plot on Median Age / Total Deaths #}
+        <div class="row">
+            <div class="col-12">
+                {#  This div is used for resizing the canvas.   #}
+                <div id="chart_div">
+                    {#  ChartJS Scatter Plot   #}
+                    <canvas id="scatter_plot_age_deaths"></canvas>
+                </div>
             </div>
         </div>
+
+
+        {# TABLE: Stats per million grouped by Country #}
+        <div class="row">
+            <div class="col-12">
+                <h2>Stats per million grouped by Country</h2>
+                <div id="table_per_million" class="ag-theme-alpine"></div>
+            </div>
+        </div>
+
+
+        {# TABLE: Stats grouped by Year then Month #}
+        <div class="row">
+            <div class="col-12">
+                <h2>Stats grouped by Year then Month</h2>
+                <div id="table_month_year" class="ag-theme-alpine"></div>
+            </div>
+        </div>
+
     </div>
+
 {% endblock %}
 
 {% block scripts %}

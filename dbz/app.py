@@ -191,6 +191,26 @@ def mysql_million():
 
     return jsonify([dict(row) for row in resultproxy])
 
+
+@app.route('/mysql/month', methods=["GET"])
+def mysql_month():
+    query = """
+    SELECT MONTH(date) as month,
+       YEAR(date)      as year,
+       SUM(new_cases)  as total_cases,
+       SUM(new_deaths) as total_deaths,
+       SUM(new_tests)  as total_tests
+    FROM DIM_country as c
+        NATURAL JOIN DIM_events
+        INNER JOIN DIM_continent as cc on c.continent_id = cc.continent_id
+    GROUP BY year, month
+    ORDER BY year, month;
+    """
+
+    resultproxy = mysql_db.engine.execute(query)
+
+    return jsonify([dict(row) for row in resultproxy])
+
 # ===================
 # Main
 # ===================
