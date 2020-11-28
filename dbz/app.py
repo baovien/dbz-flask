@@ -170,12 +170,26 @@ def mysql_scatter():
 
     resultproxy = mysql_db.engine.execute(query)
 
-    x = [dict(row) for row in resultproxy]
+    return jsonify([dict(row) for row in resultproxy])
 
-    y = jsonify(x)
 
-    return y
+@app.route('/mysql/million', methods=["GET"])
+def mysql_million():
+    query = """
+    SELECT name,
+       SUM(new_cases) / (population / 1000000)  as cases_per_million,
+       SUM(new_deaths) / (population / 1000000) as deaths_per_million,
+       SUM(new_tests) / (population / 1000000)  as tests_per_million
+    FROM DIM_country
+         NATURAL JOIN DIM_statistics
+         NATURAL JOIN DIM_events
+    GROUP BY name, population
+    ORDER BY cases_per_million DESC;
+    """
 
+    resultproxy = mysql_db.engine.execute(query)
+
+    return jsonify([dict(row) for row in resultproxy])
 
 # ===================
 # Main

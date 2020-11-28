@@ -1,108 +1,152 @@
-fetch('/mysql/scatter')
-    .then(response => response.json())
-    .then(data => {
+/**
+ * MySQL Javascript File
+ * Remember, we adhere to Google's JS Styleguide:
+ * - JSDoc: https://google.github.io/styleguide/jsguide.html#jsdoc
+ * - Method Name: https://google.github.io/styleguide/jsguide.html#naming-method-names
+ */
 
+function onFirstDataRendered_f(params) {
+    params.api.sizeColumnsToFit();
+}
 
-            let countries = data.map(a => a.name);
-            let points = data.map(function (a) {
-                return {
-                    x: a.total_deaths,
-                    y: a.median_age
-                }
-            });
+/**
+ * Draw a scatter plot on Median Age and Total Deaths.
+ * x-axis is converted to logarithmic.
+ * TODO: Switch name if more scatter plots are introduced.
+ */
+function draw_scatter_plot() {
+    fetch('/mysql/scatter')
+        .then(response => response.json())
+        .then(data => {
 
-            console.log(countries);
-            console.log(points);
+                let countries = data.map(a => a.name);
+                let points = data.map(function (a) {
+                    return {
+                        x: a.total_deaths,
+                        y: a.median_age
+                    }
+                });
 
-
-            let ctx = document.getElementById('scatter_plot_age_deaths').getContext('2d');
-            let scatterChart = new Chart(ctx, {
-                type: 'scatter',
-                data: {
-                    labels: countries,
-                    datasets: [{
-                        label: 'Countries',
-                        borderColor: "rgb(0,0,0)",
-				        backgroundColor: "rgb(0,228,255)",
-                        data: points
-                    }]
-                },
-                options: {
-                    scales: {
-                        xAxes: [{
-                            type: 'linear',
-                            position: 'bottom',
-
-                            scaleLabel:{
-                                labelString: 'Total Deaths',
-                                display: true,
-                            },
-
-                            ticks: {
-                                max: 4000, // Increase this number to increase X-axis
-                                min: 0
-                            }
-                        }],
-                        yAxes: [{
-                            scaleLabel:{
-                                labelString: 'Median Age',
-                                display: true,
-                            },
-
-                            ticks: {
-                                max: 60,
-                                min: 0
-                            }
-                        }],
+                let ctx = document.getElementById('scatter_plot_age_deaths').getContext('2d');
+                let scatterChart = new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        labels: countries,
+                        datasets: [{
+                            label: 'Countries',
+                            borderColor: "rgb(0,0,0)",
+                            backgroundColor: "rgb(0,228,255)",
+                            data: points
+                        }]
                     },
-                    tooltips: {
-                        callbacks: {
-                            label: function (tooltipItem, data) {
-                                let label = data.labels[tooltipItem.index];
-                                return label + ': Deaths: ' + tooltipItem.xLabel + ', Median Age: ' + tooltipItem.yLabel;
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                type: 'logarithmic',
+                                position: 'bottom',
+
+                                scaleLabel: {
+                                    labelString: 'Total Deaths',
+                                    display: true,
+                                },
+
+                                ticks: {
+                                    callback: function (value, index, values) {
+                                        return Number(value.toString());//pass tick values as a string into Number function
+                                    }
+                                }
+                            }],
+                            yAxes: [{
+                                scaleLabel: {
+                                    labelString: 'Median Age',
+                                    display: true,
+                                },
+
+                                ticks: {
+                                    max: 60,
+                                    min: 0
+                                }
+                            }],
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: function (tooltipItem, data) {
+                                    let label = data.labels[tooltipItem.index];
+                                    return label + ': Deaths: ' + tooltipItem.xLabel + ', Median Age: ' + tooltipItem.yLabel;
+                                }
                             }
                         }
                     }
-                }
-            });
-        }
-    )
-    .catch(error => callback(error, null))
+                });
+            }
+        )
+        .catch(error => callback(error, null))
+}
 
 
-// let ctx = document.getElementById('myChart').getContext('2d');
-// let scatterChart = new Chart(ctx, {
-//     type: 'scatter',
-//     data: {
-//         labels: ["Label 1", "Label 2", "Label 3"],
-//         datasets: [{
-//             label: 'Scatter Dataset',
-//             data: [{
-//                 x: -10,
-//                 y: 0
-//             }, {
-//                 x: 0,
-//                 y: 10
-//             }, {
-//                 x: 10,
-//                 y: 5
-//             }]
-//         }]
-//     },
-//     options: {
-//         scales: {
-//             xAxes: [{
-//                 type: 'linear',
-//                 position: 'bottom'
-//             }]
-//         },
-//         tooltips: {
-//             callbacks: {
-//                 label: function (tooltipItem, data) {
-//                     let label = data.labels[tooltipItem.index];
-//                     return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
-//                 }
-//             }
-//         }
-//     }
-// });
+/**
+ * Render table with stats on cases, deaths, and tests per million.
+ */
+function render_table_million() {
+    let columnDefs = [
+        {
+            headerName: "Country",
+            field: "name",
+            sortable: true,
+            filter: "agTextColumnFilter",
+            sortingOrder: ['desc', 'asc']
+        },
+        {
+            headerName: "Cases per million",
+            field: "cases_per_million",
+            sortable: true,
+            filter: "agTextColumnFilter",
+            sortingOrder: ['desc', 'asc']
+        },
+        {
+            headerName: "Deaths per million",
+            field: "deaths_per_million",
+            sortable: true,
+            filter: "agTextColumnFilter",
+            sortingOrder: ['desc', 'asc']
+        },
+        {
+            headerName: "Tests per million",
+            field: "tests_per_million",
+            sortable: true,
+            filter: "agTextColumnFilter",
+            sortingOrder: ['desc', 'asc']
+        },
+    ];
+
+    // let the grid know which columns and what data to use
+    gridOptionsContinents = {
+        columnDefs: columnDefs,
+        onFirstDataRendered: onFirstDataRendered_f,
+        animateRows: true,
+        pagination: true,
+
+    };
+
+
+    let gridDiv = document.querySelector('#table_per_million');
+    new agGrid.Grid(gridDiv, gridOptionsContinents);
+
+    // get data from server
+    let full_url = "/mysql/million"
+    agGrid.simpleHttpRequest({url: full_url})
+        .then(function (data) {
+            gridOptionsContinents.api.setRowData(data);
+            console.log(data)
+        });
+
+}
+
+
+
+// On-Load: setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function () {
+    draw_scatter_plot();
+
+    render_table_million();
+});

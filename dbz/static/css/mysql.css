@@ -3,3 +3,9 @@
     width: 1000px;
     /*height: 200px;*/
 }
+
+#table_per_million{
+    background-color: powderblue;
+    width: 100%;
+    height: 570px;
+}
