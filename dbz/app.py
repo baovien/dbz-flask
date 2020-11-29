@@ -13,7 +13,11 @@ from flask import Flask, render_template, url_for, jsonify, request
 from dotenv import load_dotenv
 
 from flask_sqlalchemy import SQLAlchemy
-from flask_pymongo import PyMongo
+
+# MongoDB Imports
+from pymongo import MongoClient
+# from flask_pymongo import PyMongo
+import bson.json_util as json_util
 
 # Neo4j Imports
 from dbz.neo4j_source.neo4j_app import CustomNeoApp
@@ -30,6 +34,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("MYSQL_URI")
 app.config['MONGO_URI'] = os.getenv("MONGO_URI")
 
+MONGO_USERNAME = os.getenv("MONGO_USERNAME")
+MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
+MONGO_URI = os.getenv("MONGO_URI")
+
 NEO_USERNAME = os.getenv("NEO_USERNAME")
 NEO_PASSWORD = os.getenv("NEO_PASSWORD")
 NEO_URI = os.getenv("NEO_URI")
@@ -45,7 +53,9 @@ port = 5000
 mysql_db = SQLAlchemy(app)
 
 # MongoDB
-mongo = PyMongo(app)
+mongo = MongoClient(MONGO_URI)
+mongo_db = mongo["corona"]
+mongo_cursor = mongo_db["data"]
 
 # Neo4j
 neo_driver = CustomNeoApp(NEO_URI, NEO_USERNAME, NEO_PASSWORD)
@@ -67,7 +77,6 @@ def mysql():
 
 @app.route('/mongo')
 def mongo():
-    print(mongo)
     return render_template("mongo.html")
 
 
@@ -128,8 +137,28 @@ def mysql_stats():
 
 @app.route('/mongo-stats', methods=["GET"])
 def mongo_stats():
+    data = mongo_cursor.aggregate([
+        {
+            "$group": {
+                "_id": "$location",
+                "confirmed": {"$sum": "$new_cases"},
+                "deaths": {"$sum": "$new_deaths"},
+                "tests": {"$sum": "$new_tests"},
+            }
+        }, {
+            "$addFields": {
+                "location": "$_id"
+            }
+        },
+        {
+            "$project": {"_id": 0}
+        },
+        {
+            "$sort": {"location": 1}
+        }
+    ])
 
-    return jsonify("false")
+    return json_util.dumps(data)
 
 
 @app.route('/neo-stats', methods=["GET"])
