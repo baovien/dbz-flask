@@ -200,12 +200,59 @@ def mysql_scatter():
 
     resultproxy = mysql_db.engine.execute(query)
 
-    x = [dict(row) for row in resultproxy]
+    return jsonify([dict(row) for row in resultproxy])
 
-    y = jsonify(x)
 
-    return y
+@app.route('/mysql/million', methods=["GET"])
+def mysql_million():
+    query = """
+    SELECT name,
+       SUM(new_cases) / (population / 1000000)  as cases_per_million,
+       SUM(new_deaths) / (population / 1000000) as deaths_per_million,
+       SUM(new_tests) / (population / 1000000)  as tests_per_million
+    FROM DIM_country
+         NATURAL JOIN DIM_statistics
+         NATURAL JOIN DIM_events
+    GROUP BY name, population
+    ORDER BY cases_per_million DESC;
+    """
 
+    resultproxy = mysql_db.engine.execute(query)
+
+    return jsonify([dict(row) for row in resultproxy])
+
+
+@app.route('/mysql/month', methods=["GET"])
+def mysql_month():
+    query = """
+    SELECT MONTH(date) as month,
+       YEAR(date)      as year,
+       SUM(new_cases)  as total_cases,
+       SUM(new_deaths) as total_deaths,
+       SUM(new_tests)  as total_tests
+    FROM DIM_country as c
+        NATURAL JOIN DIM_events
+        INNER JOIN DIM_continent as cc on c.continent_id = cc.continent_id
+    GROUP BY year, month
+    ORDER BY year, month;
+    """
+
+    resultproxy = mysql_db.engine.execute(query)
+
+    return jsonify([dict(row) for row in resultproxy])
+
+
+@app.route('/mysql/map', methods=["GET"])
+def mysql_map():
+    query = """
+        SELECT name, SUM(new_deaths) as total_deaths
+        FROM DIM_country NATURAL JOIN DIM_events
+        GROUP BY name;
+        """
+
+    resultproxy = mysql_db.engine.execute(query)
+
+    return jsonify([dict(row) for row in resultproxy])
 
 # ===================
 # Main
