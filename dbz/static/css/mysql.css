@@ -4,6 +4,12 @@
     /*height: 200px;*/
 }
 
+#world_stats{
+    /*background-color: #cbf6cb;*/
+    background-color: orange;
+    border-radius: 14pt;
+}
+
 #table_per_million {
     background-color: powderblue;
     width: 100%;
