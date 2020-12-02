@@ -18,21 +18,40 @@
             <h1 class="display-1">MySQL Dashboard</h1>
             <p class="lead">
                 <b>Tutorial:</b><br/>
-                Hover your mouse pointer on various elements on this page for more information.<br/>
+                Hover your mouse pointer on various elements on this page for more information.
             </p>
         </div>
     </div>
 
 
-
-
     <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>Latest Event: <span class="badge badge-danger">{{ latest_date }}</span></h1>
+            </div>
+        </div>
+        <br/>
+
+        <div id="world_stats" class="row">
+            <div class="col-4 text-center">
+                <h1 class="display-4"><b>Total Cases:</b></h1>
+                <h1 class="display-4">{{ total_cases }}</h1>
+            </div>
+            <div class="col-4 text-center">
+                <h1 class="display-4"><b>Total Deaths:</b></h1>
+                <h1 class="display-4">{{ total_deaths }}</h1>
+            </div>
+            <div class="col-4 text-center">
+                <h1 class="display-4"><b>Total Tests:</b></h1>
+                <h1 class="display-4">{{ total_tests }}</h1>
+            </div>
+        </div>
 
         {# CHOROPLETH MAP #}
         <div class="row">
             <div class="col-12">
                 <div id='myDiv'>
-                {#   Plotly chart will be drawn inside this DIV   #}
+                    {#   Plotly chart will be drawn inside this DIV   #}
                 </div>
             </div>
         </div>

@@ -72,7 +72,37 @@ def index():
 
 @app.route('/mysql')
 def mysql():
-    return render_template("mysql.html")
+
+    # Get world-stats
+    query = """
+    SELECT * 
+    FROM `covid_adb`.FACT_world_events;
+    """
+
+    resultproxy = mysql_db.engine.execute(query)
+
+    x = resultproxy.fetchone()
+
+    total_cases = '{:,}'.format(int(x['total_cases']))
+    total_deaths = '{:,}'.format(int(x['total_deaths']))
+    total_tests = '{:,}'.format(int(x['total_tests']))
+
+    # Get latest date
+    query = """
+    SELECT date 
+    FROM DIM_date
+    ORDER BY date DESC;
+    """
+
+    result_dates = mysql_db.engine.execute(query)
+
+    latest_date = result_dates.fetchone()['date']
+
+    return render_template("mysql.html",
+                           total_cases=total_cases,
+                           total_deaths=total_deaths,
+                           total_tests=total_tests,
+                           latest_date=latest_date)
 
 
 @app.route('/mongo')
@@ -106,6 +136,7 @@ def login():
         ]
         
 """
+
 
 @app.route('/api-test', methods=["GET"])
 def api_test():
@@ -160,7 +191,6 @@ def mongo_stats():
 
     return json_util.dumps(data)
 
-
 @app.route('/neo-stats', methods=["GET"])
 def neo_stats():
     data = neo_driver.get_common_summary()
@@ -185,17 +215,28 @@ def neo_continent():
     return jsonify(continent_stats)
 
 
+# TODO: DELETE
+@app.route('/mysql/poop', methods=["GET"])
+def mysql_poop():
+    query = """
+    SELECT *
+    FROM `covid_adb`.FACT_world_events;
+    """
+
+    resultproxy = mysql_db.engine.execute(query)
+
+    return jsonify([dict(row) for row in resultproxy])
+
+
 @app.route('/mysql/scatter', methods=["GET"])
 def mysql_scatter():
     query = """
-    SELECT name, median_age, SUM(new_deaths) as total_deaths
-    FROM DIM_country
-             NATURAL JOIN DIM_statistics
-             NATURAL JOIN DIM_events
+    SELECT name, median_age, total_deaths
+    FROM 
+        `covid_adb`.FACT_country_events
+        NATURAL JOIN DIM_country
     WHERE
-        median_age <> 0
-    GROUP BY name, median_age
-    ORDER BY name;
+        median_age <> 0;
     """
 
     resultproxy = mysql_db.engine.execute(query)
@@ -206,15 +247,15 @@ def mysql_scatter():
 @app.route('/mysql/million', methods=["GET"])
 def mysql_million():
     query = """
-    SELECT name,
-       SUM(new_cases) / (population / 1000000)  as cases_per_million,
-       SUM(new_deaths) / (population / 1000000) as deaths_per_million,
-       SUM(new_tests) / (population / 1000000)  as tests_per_million
-    FROM DIM_country
-         NATURAL JOIN DIM_statistics
-         NATURAL JOIN DIM_events
-    GROUP BY name, population
-    ORDER BY cases_per_million DESC;
+    SELECT 
+        name,
+        cases_per_million,
+        deaths_per_million,
+        tests_per_million
+    FROM 
+        `covid_adb`.FACT_per_million_events E
+        NATURAL JOIN DIM_country C
+    ORDER BY name DESC;
     """
 
     resultproxy = mysql_db.engine.execute(query)
@@ -225,16 +266,14 @@ def mysql_million():
 @app.route('/mysql/month', methods=["GET"])
 def mysql_month():
     query = """
-    SELECT MONTH(date) as month,
-       YEAR(date)      as year,
-       SUM(new_cases)  as total_cases,
-       SUM(new_deaths) as total_deaths,
-       SUM(new_tests)  as total_tests
-    FROM DIM_country as c
-        NATURAL JOIN DIM_events
-        INNER JOIN DIM_continent as cc on c.continent_id = cc.continent_id
-    GROUP BY year, month
-    ORDER BY year, month;
+    SELECT 
+        month,
+        year,
+        total_cases,
+        total_deaths,
+        total_tests
+    FROM 
+        `covid_adb`.FACT_events_year_month;
     """
 
     resultproxy = mysql_db.engine.execute(query)
@@ -245,14 +284,18 @@ def mysql_month():
 @app.route('/mysql/map', methods=["GET"])
 def mysql_map():
     query = """
-        SELECT name, SUM(new_deaths) as total_deaths
-        FROM DIM_country NATURAL JOIN DIM_events
-        GROUP BY name;
-        """
+    SELECT 
+        name, 
+        total_deaths
+    FROM
+        `covid_adb`.FACT_country_events CE
+        NATURAL JOIN DIM_country C;
+    """
 
     resultproxy = mysql_db.engine.execute(query)
 
     return jsonify([dict(row) for row in resultproxy])
+
 
 # ===================
 # Main
