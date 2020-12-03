@@ -232,7 +232,7 @@ function draw_choropleth_map() {
                 }];
 
                 let layout = {
-                    title: 'Total Covid-19 Cases',
+                    title: 'Covid-19 Deaths by Country',
                     geo: {
                         projection: {
                             type: 'robinson'
