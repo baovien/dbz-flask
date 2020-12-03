@@ -14,6 +14,41 @@ function onFirstDataRendered_f(params) {
  * x-axis is converted to logarithmic.
  * TODO: Switch name if more scatter plots are introduced.
  */
+
+function draw_pie_chart() {
+    fetch('/mongo/pie')
+        .then(response => response.json())
+        .then(data => {
+                let ctx = document.getElementById('mongopie').getContext("2d");
+                let labels = data.map(a => a.name);
+                let points = data.map(a => a.total_cases);
+                let myPieChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [{
+                            data: points
+                        }],
+                        labels: labels
+
+                    },
+                    options: {
+                        legend: {
+                            display: false
+                        },
+                        plugins: {
+                            colorschemes: {
+                                scheme: 'tableau.ClassicOrangeWhiteBlue11'
+                            }
+                        }
+                    }
+
+                });
+            }
+        )
+        .catch(error => console.log(`Fetch error: ${error}`))
+}
+
+
 function draw_scatter_plot() {
     fetch('/mongo/scatter')
         .then(response => response.json())
@@ -34,8 +69,8 @@ function draw_scatter_plot() {
                         labels: countries,
                         datasets: [{
                             label: 'Countries',
-                            borderColor: "rgb(0,0,0)",
-                            backgroundColor: "rgb(0,228,255)",
+                            borderColor: "rgb(147,147,147)",
+                            backgroundColor: "rgb(151,59,59)",
                             data: points
                         }]
                     },
@@ -75,7 +110,15 @@ function draw_scatter_plot() {
                                     return label + ': Deaths: ' + tooltipItem.xLabel + ', Median Age: ' + tooltipItem.yLabel;
                                 }
                             }
-                        }
+                        },
+                        plugins: {
+                            colorschemes: {
+                                scheme: 'tableau.ClassicOrangeWhiteBlue11'
+                            }
+                        },legend: {
+                            position: "right",
+                            align: "start"
+                        },
                     }
                 });
             }
@@ -215,7 +258,7 @@ function draw_choropleth_map() {
         .then(result => {
 
                 let countries = result.map(a => a.name);
-                let deaths = result.map(b => b.total_deaths);
+                let deaths = result.map(b => b.total_cases);
 
                 let data = [{
                     type: 'choropleth',
@@ -225,12 +268,11 @@ function draw_choropleth_map() {
                     autocolorscale: true,
                     colorbar: {
                         autotic: true,
-                        title: 'Total Deaths'
+                        title: 'Total Cases'
                     },
                 }];
 
                 let layout = {
-                    title: 'Total Covid-19 Cases',
                     geo: {
                         projection: {
                             type: 'robinson'
@@ -251,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     draw_choropleth_map()
     draw_scatter_plot();
-
+    draw_pie_chart()
     render_table_million();
     render_table_month_year();
 

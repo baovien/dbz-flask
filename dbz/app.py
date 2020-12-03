@@ -72,7 +72,6 @@ def index():
 
 @app.route('/mysql')
 def mysql():
-
     # Get world-stats
     query = """
     SELECT * 
@@ -400,7 +399,7 @@ def mongo_map():
         {
             "$group": {
                 "_id": "$location",
-                "total_deaths": {"$sum": "$new_deaths"}
+                "total_cases": {"$sum": "$new_cases"}
             }
         }, {
             "$addFields": {
@@ -414,6 +413,32 @@ def mongo_map():
         },
         {
             "$sort": {"name": 1}
+        }
+    ])
+
+    return json_util.dumps(data)
+
+
+@app.route('/mongo/pie', methods=["GET"])
+def mongo_pie():
+    data = mongo_cursor.aggregate([
+        {
+            "$group": {
+                "_id": "$location",
+                "total_cases": {"$sum": "$new_cases"}
+            }
+        }, {
+            "$addFields": {
+                "name": "$_id"
+            }
+        },
+        {
+            "$project": {
+                "_id": 0
+            }
+        },
+        {
+            "$sort": {"total_cases": -1}
         }
     ])
 
