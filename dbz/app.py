@@ -191,6 +191,7 @@ def mongo_stats():
 
     return json_util.dumps(data)
 
+
 @app.route('/neo-stats', methods=["GET"])
 def neo_stats():
     data = neo_driver.get_common_summary()
@@ -295,7 +296,6 @@ def mysql_map():
     resultproxy = mysql_db.engine.execute(query)
 
     return jsonify([dict(row) for row in resultproxy])
-
 
 # ===================
 # Main
