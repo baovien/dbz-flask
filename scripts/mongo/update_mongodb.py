@@ -50,4 +50,4 @@ json_df = df.to_json(orient='records')
 json_data = json.loads(json_df)
 
 # insert into mongodb
-collection.insert_many(json_data)
+collection.update_many(json_data, {"upsert": True})

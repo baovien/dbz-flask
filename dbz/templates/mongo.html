@@ -26,6 +26,16 @@
 
     <div class="container">
 
+        {# CHART: Piechart distribution of total cases #}
+        <div class="row">
+            <div class="col-12">
+                <div class="chart_div">
+                    <h2>Distribution of cases</h2>
+                    <canvas id="mongopie"></canvas>
+                </div>
+            </div>
+        </div>
+
         {# CHOROPLETH MAP #}
         <div class="row">
             <div class="col-12">
@@ -33,16 +43,6 @@
 
                 <div id='myDiv'>
                     {#   Plotly chart will be drawn inside this DIV   #}
-                </div>
-            </div>
-        </div>
-
-        {# CHART: Piechart distribution of total cases #}
-        <div class="row">
-            <div class="col-12">
-                <div class="chart_div">
-                    <h2>Distribution of cases</h2>
-                    <canvas id="mongopie"></canvas>
                 </div>
             </div>
         </div>

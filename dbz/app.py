@@ -9,9 +9,10 @@ import json
 # See https://github.com/pallets/flask/issues/835
 import simplejson
 
-from flask import Flask, render_template, url_for, jsonify, request
+from flask import Flask, render_template, url_for, jsonify, request, session, redirect
 from dotenv import load_dotenv
 
+import sqlalchemy
 from flask_sqlalchemy import SQLAlchemy
 
 # MongoDB Imports
@@ -29,11 +30,11 @@ load_dotenv()
 # Configs
 # ===================
 
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['TEMPLATES_AUTO_RELOAD'] = True  # Force update on html on change
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("MYSQL_URI")
 app.config['MONGO_URI'] = os.getenv("MONGO_URI")
-
 MONGO_USERNAME = os.getenv("MONGO_USERNAME")
 MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
 MONGO_URI = os.getenv("MONGO_URI")
@@ -67,7 +68,62 @@ neo_driver = CustomNeoApp(NEO_URI, NEO_USERNAME, NEO_PASSWORD)
 
 @app.route('/')
 def index():
-    return render_template("home.html")
+    if 'username' in session:
+        username = session['username']
+        return render_template("home.html", user=username)
+    return redirect(url_for('login'))
+
+
+@app.route('/admin')
+def admin():
+    if 'username' in session:
+        username = session['username']
+        if username == "admin":
+            return render_template("admin.html", user=username)
+        else:
+            return redirect(url_for('index'))
+    return redirect(url_for('login'))
+
+
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    msg = ""
+
+    # Check if "username" and "password" POST requests exist (user submitted form)
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        # Create variables for easy access
+        username = request.form['username']
+        password = request.form['password']
+
+        # Check if account exists using MySQL
+        query = sqlalchemy.text("SELECT * FROM `dbzlogin`.accounts WHERE username = :uname AND password = :pword")
+        auth = mysql_db.engine.execute(query, uname=username, pword=password)
+        acc = auth.fetchone()
+
+        # If account exists in accounts table in out database
+        if acc:
+            # Create session data, we can access this data in other routes
+            session['logged_in'] = True
+            session['id'] = acc['id']
+            session['username'] = acc['username']
+            # Redirect to home page
+            return redirect(url_for('index'))
+        else:
+            # Account doesnt exist or username/password incorrect
+            msg = 'Incorrect username/password!'
+
+    return render_template("login.html", msg=msg)
+
+
+@app.route('/logout')
+def logout():
+    # Remove session data, this will log the user out
+    session.pop('logged_in', None)
+    session.pop('id', None)
+    session.pop('username', None)
+
+    # Redirect to login page
+    return redirect(url_for('login'))
 
 
 @app.route('/mysql')
@@ -112,11 +168,6 @@ def mongo():
 @app.route('/neo')
 def neo():
     return render_template("neo.html")
-
-
-@app.route('/login')
-def login():
-    return render_template("login.html")
 
 
 # ===================
