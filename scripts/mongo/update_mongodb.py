@@ -1,5 +1,5 @@
 """
-MongoDB creates databases and collections automatically for you if they don't exist already.
+This scripts inserts new data to the covid data collection.
 """
 
 import json
@@ -9,7 +9,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
-load_dotenv()
+load_dotenv(dotenv_path="../../dbz/.env")
 
 MONGO_URI = os.getenv("MONGO_URI")
 
@@ -50,4 +50,4 @@ json_df = df.to_json(orient='records')
 json_data = json.loads(json_df)
 
 # insert into mongodb
-collection.update_many(json_data, {"upsert": True})
+collection.update_many(update=json_data, upsert=True)  # TODO: FIX
