@@ -297,6 +297,129 @@ def mysql_map():
 
     return jsonify([dict(row) for row in resultproxy])
 
+
+@app.route('/mongo/scatter', methods=["GET"])
+def mongo_scatter():
+    data = mongo_cursor.aggregate([
+        {
+            "$group": {
+                "_id": "$location",
+                "median_age": {"$first": "$median_age"},
+                "total_deaths": {"$sum": "$new_deaths"}
+            }
+        }, {
+            "$addFields": {
+                "name": "$_id"
+            }
+        },
+        {
+            "$project": {
+                "_id": 0
+            }
+        },
+        {
+            "$sort": {"name": 1}
+        },
+        {
+            "$match": {"median_age": {"$ne": None}}
+        }
+    ])
+
+    return json_util.dumps(data)
+
+
+@app.route('/mongo/million', methods=["GET"])
+def mongo_million():
+    data = mongo_cursor.aggregate([
+        {
+            "$group": {
+                "_id": "$location",
+                "cases_per_million": {"$sum": "$new_cases"},
+                "deaths_per_million": {"$sum": "$new_deaths"},
+                "tests_per_million": {"$sum": "$new_tests"},
+                "population": {"$first": "$population"}
+            }
+        },
+        {
+            "$addFields": {
+                "name": "$_id"
+            }
+        }, {
+            "$project": {
+                "_id": 0,
+                "name": 1,
+                "cases_per_million": {"$round": [
+                    {"$divide": ["$cases_per_million", {"$divide": ["$population", 1000000]}]}, 2]
+                },
+                "deaths_per_million": {"$round": [
+                    {"$divide": ["$deaths_per_million", {"$divide": ["$population", 1000000]}]}, 2]
+                },
+                "tests_per_million": {"$round": [
+                    {"$divide": ["$tests_per_million", {"$divide": ["$population", 1000000]}]}, 2]
+                }
+            }
+        }, {
+            "$sort": {"name": 1}
+        }
+    ])
+
+    return json_util.dumps(data)
+
+
+@app.route('/mongo/month', methods=["GET"])
+def mongo_month():
+    data = mongo_cursor.aggregate([
+        {
+            "$group": {
+                "_id": {
+                    "month": "$month",
+                    "year": "$year"
+                },
+                "total_cases": {"$sum": "$new_cases"},
+                "total_deaths": {"$sum": "$new_deaths"},
+                "total_tests": {"$sum": "$new_tests"}
+            }
+        }, {
+            "$addFields": {
+                "month": "$_id.month",
+                "year": "$_id.year"
+            }
+        }, {
+            "$sort": {"year": 1, "month": 1}
+        }, {
+            "$project": {"_id": 0, "month": 1, "year": 1, "total_cases": 1, "total_deaths": 1, "total_tests": 1}
+        }
+    ])
+
+    return json_util.dumps(data)
+
+
+@app.route('/mongo/map', methods=["GET"])
+def mongo_map():
+    data = mongo_cursor.aggregate([
+        {
+            "$group": {
+                "_id": "$location",
+                "total_deaths": {"$sum": "$new_deaths"}
+            }
+        }, {
+            "$addFields": {
+                "name": "$_id"
+            }
+        },
+        {
+            "$project": {
+                "_id": 0
+            }
+        },
+        {
+            "$sort": {"name": 1}
+        }
+    ])
+
+    return json_util.dumps(data)
+
+
 # ===================
 # Main
 # ===================

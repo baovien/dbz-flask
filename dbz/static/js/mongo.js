@@ -137,7 +137,6 @@ function render_table_million() {
     agGrid.simpleHttpRequest({url: full_url})
         .then(function (data) {
             gridOptionsContinents.api.setRowData(data);
-            console.log(data)
         });
 
 }
@@ -202,7 +201,6 @@ function render_table_month_year() {
     agGrid.simpleHttpRequest({url: full_url})
         .then(function (data) {
             gridOptionsContinents.api.setRowData(data);
-            console.log(data)
         });
 
 }
@@ -252,7 +250,6 @@ function draw_choropleth_map() {
 document.addEventListener('DOMContentLoaded', function () {
 
     draw_choropleth_map()
-
     draw_scatter_plot();
 
     render_table_million();
