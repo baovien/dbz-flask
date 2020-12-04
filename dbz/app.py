@@ -188,27 +188,13 @@ def neo():
 """
 
 
-@app.route('/api-test', methods=["GET"])
-def api_test():
-    """
-    Eksempel endpoint som blir kalt i home.js (api_call_example)
-    :return:
-    """
-    dict_of_items = {
-        "test": 123,
-        "helo": "wrld"
-    }
-
-    return jsonify(dict_of_items)
-
-
 @app.route('/mysql-stats', methods=["GET"])
 def mysql_stats():
+
     query = """
-    SELECT c.name AS location, SUM(e.new_cases) as confirmed, SUM(e.new_deaths) as deaths, SUM(e.new_tests) as tests
-    FROM DIM_country as c, DIM_events AS e
-    WHERE c.iso_code=e.iso_code
-    GROUP BY location
+    SELECT name as location, total_cases as confirmed, total_deaths as deaths, total_tests as tests
+    FROM `covid_adb`.FACT_country_events NATURAL JOIN DIM_country
+    ORDER BY name;
     """
 
     resultproxy = mysql_db.engine.execute(query)
@@ -264,19 +250,6 @@ def neo_continent():
     continent_name = continent_name.title()  # Properly capitalize
     continent_stats = neo_driver.get_continent_stats(continent_name)
     return jsonify(continent_stats)
-
-
-# TODO: DELETE
-@app.route('/mysql/poop', methods=["GET"])
-def mysql_poop():
-    query = """
-    SELECT *
-    FROM `covid_adb`.FACT_world_events;
-    """
-
-    resultproxy = mysql_db.engine.execute(query)
-
-    return jsonify([dict(row) for row in resultproxy])
 
 
 @app.route('/mysql/scatter', methods=["GET"])
