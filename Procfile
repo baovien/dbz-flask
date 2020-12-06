@@ -1,1 +1,1 @@
-web: gunicorn dbz:app
+web: gunicorn --chdir dbz app:app
