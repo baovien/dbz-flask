@@ -128,6 +128,8 @@ def logout():
 
 @app.route('/mysql')
 def mysql():
+    username = session['username']
+
     # Get world-stats
     query = """
     SELECT * 
@@ -157,17 +159,20 @@ def mysql():
                            total_cases=total_cases,
                            total_deaths=total_deaths,
                            total_tests=total_tests,
-                           latest_date=latest_date)
+                           latest_date=latest_date,
+                           user=username)
 
 
 @app.route('/mongo')
 def mongo():
-    return render_template("mongo.html")
+    username = session['username']
+    return render_template("mongo.html", user=username)
 
 
 @app.route('/neo')
 def neo():
-    return render_template("neo.html")
+    username = session['username']
+    return render_template("neo.html", user=username)
 
 
 # ===================
