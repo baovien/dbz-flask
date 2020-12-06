@@ -3,6 +3,7 @@ let credentials = {
     server_url: "bolt://167.99.255.7:7687",
     server_user: "neo4j",
     server_password: "Alpacas1",
+    encrypted: "ENCRYPTION_ON"
 }
 
 // Note: Dirty fix for below function
