@@ -2,26 +2,9 @@ function onFirstDataRendered_f(params) {
     params.api.sizeColumnsToFit();
 }
 
-/**
- * Det er mulig å skrive get requestene på forskjellige måter
- */
-function api_call_example() {
-    // method 1 (jquery ajax)
-    $.getJSON("/api-test", function (data_from_api) {
-        console.log(data_from_api)
-    })
-
-    // method 2 (vanilla JS)
-    fetch('/api-test')
-        .then(response => response.json())
-        .then(data_from_api => console.log(data_from_api))
-}
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    api_call_example();
-
     let columnDefs = [
         {
             headerName: "Location",
@@ -68,7 +51,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     agGrid.simpleHttpRequest({url: '/mysql-stats'})
         .then(function (data) {
-            console.log(data)
             gridOptions.api.showLoadingOverlay()
             gridOptions.api.setRowData(data);
         });
@@ -79,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
         agGrid
             .simpleHttpRequest({url: '/mysql-stats'})
             .then(function (data) {
-                console.log(data)
                 gridOptions.api.setRowData(data);
             });
     });
@@ -90,7 +71,6 @@ document.addEventListener('DOMContentLoaded', function () {
         agGrid
             .simpleHttpRequest({url: '/mongo-stats'})
             .then(function (data) {
-                console.log(data)
                 gridOptions.api.setRowData(data);
             });
     });
@@ -101,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function () {
         agGrid
             .simpleHttpRequest({url: '/neo-stats'})
             .then(function (data) {
-                console.log(data)
                 gridOptions.api.setRowData(data);
             });
     });
