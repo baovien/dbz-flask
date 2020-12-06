@@ -1,9 +1,10 @@
 // Credentials have to be stored client-side (Read: https://github.com/neo4j-contrib/neovis.js/issues/101)
 let credentials = {
-    server_url: "neo4j://167.99.255.7:7687",
+    server_url: "bolt://167.99.255.7:7687",
     server_user: "neo4j",
     server_password: "Alpacas1",
-    encrypted: "ENCRYPTION_ON"
+    encrypted: "ENCRYPTION_OFF",
+    trust: "TRUST_SYSTEM_CA_SIGNED_CERTIFICATES"
 }
 
 // Note: Dirty fix for below function
