@@ -19,7 +19,6 @@ MERGE (d:Date {date : date(line.date)});
 LOAD CSV WITH HEADERS FROM 'https://covid.ourworldindata.org/data/owid-covid-data.csv' AS line
 WITH line WHERE line.iso_code IS NOT NULL AND line.iso_code <> 'OWID_WRL'
 MERGE (c:Country {iso_code: line.iso_code})
-WITH line WHERE line.date IS NOT NULL
 MERGE (d:Date {date : date(line.date)})
 MERGE (c)<-[:IN]-(e:Event)-[:DURING]->(d)
 ON CREATE SET
