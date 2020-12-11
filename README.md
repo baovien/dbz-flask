@@ -1,7 +1,9 @@
 # dbz
-## Installation
 
-Create a `.env` file in the dbz directory (or ask Bao for his `.env` file) 
+## Setup
+
+Create a `.env` file in the dbz `(dbz-flask/dbz/.env)` directory. 
+
 ```
 SERVER_IP=
 
@@ -22,17 +24,19 @@ MONGO_URI=
 MONGO_USERNAME=
 MONGO_PASSWORD=
 MONGO_PORT=
-
 ```
 
 Activate your environment
 ```
 conda activate <yourenvironment>
 cd dbz-flask
-pip install -e .
 ```
+
+Install the module
+`pip install -e .`
+
 
 ## Run the application
 
-Go to project root and run `python -m dbz.app`
+Run `python -m dbz.app`
 
